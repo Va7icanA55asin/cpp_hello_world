@@ -5,3 +5,6 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_executable(cpp_hello_world
         main.cpp)
+
+add_executable(cpp_hello_world_2
+        main_2.cpp)
