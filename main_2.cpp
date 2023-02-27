@@ -4,6 +4,7 @@
 // This is based on the docs at https://cplusplus.com/doc/tutorial/
 //
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -101,6 +102,32 @@ int main() {
     // Assignment (R to L) = *= /= %= += -= >>= <<= &= ^= |= ?:
     // Sequencing ,
     // "When an expression has two operators with the same precedence level, grouping determines which one is evaluated first: either left-to-right or right-to-left."
+
+    // Basic IO
+    cout << "Basic String " << a << " " << 21 << endl;
+    int int_input;
+    string str_input;
+    // This isn't really proper form since cin will fail silently if expected type != given type
+    // Also note, getting a string is whitespace delimited so only a single word will be retrieved
+    cout << "Enter a number, then enter a string" << endl;
+    cin >> int_input >> str_input;
+    cout << "Int given is " << int_input << " string given is " << str_input << endl;
+    // To get a full line
+    cout << "Enter a full line of text:" << endl;
+    cin.ignore(); // Not proper format to use both >> and getline but this is just a test program so using this fix to get around trailing new line
+    getline(cin, str_input);
+    cout << "Line given is " << str_input << endl;
+    // stringstream
+    string stream_test ("2048");
+    int stream_int;
+    stringstream(stream_test) >> stream_int;
+    cout << "Stream test: " << stream_int << endl;
+    string number_test_str;
+    int number_test;
+    cout << "Enter number:";
+    getline(cin, number_test_str);
+    stringstream(number_test_str) >> number_test;
+    cout << "Number was: " << number_test << endl;
 
     return 0;
 }
