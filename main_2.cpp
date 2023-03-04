@@ -10,6 +10,29 @@ using namespace std;
 
 #define DEFINITION "this is a definition"
 
+// Variable names in prototypes is optional but recommended
+void test_function_by_value(string a, int b);
+bool test_function_by_reference(string& a, int& b);
+inline string concatenate(const string& a, const string& b);
+int function_with_default(int a=1, int b=2, int c=3);
+// Overloaded
+void test_function_by_value(int a, int b, int c);
+
+// Templates
+template <class T>
+T template_function(T a, T b);
+
+// Namespaces
+namespace test_namespace {
+    int abc, xyz;
+    string get_name() {
+        return "test_namespace";
+    }
+}
+
+// Would probably make more sense to be in test_namespace but this is for demonstration
+int add_namespace_values();
+
 int main() {
     // Data types
     char letter = 'a';
@@ -129,5 +152,146 @@ int main() {
     stringstream(number_test_str) >> number_test;
     cout << "Number was: " << number_test << endl;
 
+    // Flow control
+    // Normal if else if etc conditions apply
+    // Normal while, do while, for, and for each (or range) loops
+    // for each works on any type that supports the begin and end functions
+    // break and continue also exist and work as expected
+    // goto exists (and as expected has few uses in modern day)
+    // Note goto ignores nesting levels so should be used with care
+    bool has_jumped = false;
+test_label:
+    if (!has_jumped) {
+        has_jumped = true;
+        cout << "Jumping" << endl;
+        goto test_label;
+    }
+    cout << "Jumped" << endl;
+    // switch also exists and works as expected and has fall through and a default
+    // switch conditions MUST be constant expressions
+
+    // Functions
+    // Keep in mind by reference and by value
+    test_function_by_value("abc", 23);
+    string str_reference = "abc";
+    int int_reference = 24;
+    cout << "The reference values are " << str_reference << " and " << int_reference << endl;
+    bool did_update = test_function_by_reference(str_reference, int_reference);
+    if (did_update)
+        cout << "The updated reference values are " << str_reference << " and " << int_reference << endl;
+    else // Shouldn't happen but included for completeness
+        cout << "Reference values were not updated" << endl;
+    // Inline functions
+    cout << "Combined string is: " << concatenate("abc", "def") << endl;
+    // Defaults
+    int fun_result = function_with_default();
+    cout << "Default result " << fun_result << endl;
+    fun_result = function_with_default(4);
+    cout << "Two defaults result " << fun_result << endl;
+    fun_result = function_with_default(4, 8, 6);
+    cout << "No defaults result " << fun_result << endl;
+
+    // Overloads and templates
+    test_function_by_value(1, 2, 3);
+    // Functions cannot be overloaded on return type alone
+    // Templates
+    string template_result_str = template_function<string>("abc", "def");
+    cout << "Template result: " << template_result_str << endl;
+    int template_result_int = template_function(2, 2);
+    cout << "Template result: " << template_result_int << endl;
+    // Templates can contain multiple types (class T, class U, etc.)
+    // They can also take in literals <class T, int N> and usage <int, 4> will make T type int and uses of N 4
+    // The second argument MUST be a constant expression
+
+    // Name visibility
+    // Scope
+    // global and local exist and name collisions are not allowed to occur within the same scope
+    // local variables can however redefine global variables
+    // Namespaces
+    // Declaration must be in global scope
+    cout << "Test Namespace Name: " << test_namespace::get_name() << endl;
+    test_namespace::abc = 26;
+    test_namespace::xyz = 27;
+    cout << "Namespace values: " << test_namespace::abc << " " << test_namespace::xyz << endl;
+    // Note namespaces can be split
+    // As in test_namespace values could exist in two files and all values in that namespace would be within that namespace
+    // using keyword
+    // The using keyword brings a namespaces values into the current scope such as with cout which is actually std::cout
+    int namespace_sum = add_namespace_values();
+    cout << "Sum of namespace values: " << namespace_sum << endl;
+    // This is an interesting example of splitting namespace use into blocks within the same function
+    //    int main () {
+    //        {
+    //            using namespace first;
+    //            cout << x << '\n';
+    //        }
+    //        {
+    //            using namespace second;
+    //            cout << x << '\n';
+    //        }
+    //        return 0;
+    //    }
+    // Namespaces can be aliased using
+    namespace new_name = test_namespace;
+    cout << "Aliased namespace name function: " << new_name::get_name() << endl;
+    // NOTE global variables (or more accurately variables with static storage) that are not explicitly initialized are auto initialized to 0
+    // automatic storage variables that are uninitialized have undetermined value
+
+    // Arrays
+
     return 0;
+}
+
+void test_function_by_value(string a, int b) {
+    // The parameter wants to be "const string& a" to prevent copying
+    // (since string could potentially be large) and mark the value as non-changing
+    // We won't do that here just because this function is for by value but that would be ideal in normal use
+    cout << "The string A is: " << a << endl;
+    cout << "The int B is: " << b << endl;
+}
+
+bool test_function_by_reference(string& a, int& b) {
+    if (b == 24) {
+        a = "def";
+        b = 25;
+        return true;
+    } else { // Shouldn't happen but included for completeness
+        return false;
+    }
+}
+
+// Example taken from the docs
+// Referring to the inline keyword
+// "This informs the compiler that when concatenate is called, the program prefers the function to be expanded inline,
+// instead of performing a regular call. inline is only specified in the function declaration, not when it is called."
+// "Note that most compilers already optimize code to generate inline functions when they see an opportunity to improve
+// efficiency, even if not explicitly marked with the inline specifier. Therefore, this specifier merely indicates
+// the compiler that inline is preferred for this function, although the compiler is free to not inline it, and
+// optimize otherwise."
+inline string concatenate(const string& a, const string& b) {
+    return a + b;
+}
+
+int function_with_default(int a, int b, int c) {
+    return (a+b) / c;
+}
+
+void test_function_by_value(int a, int b, int c) {
+    cout << "The int A is: " << a << endl;
+    cout << "The int B is: " << b << endl;
+    cout << "The int C is: " << c << endl;
+}
+
+template <class T>
+T template_function(T a, T b) {
+    return a + b;
+}
+
+int add_namespace_values() {
+    // Alternatively, we can specify specific values such as
+    // using test_namespace::xyz or using test_namespace::get_name
+    // These would only pull xyz or get_name into the scope to be used unqualified
+    using namespace test_namespace;
+    cout << "Adding namespace values for namespace: " << get_name() << endl;
+    return abc + xyz;
 }
