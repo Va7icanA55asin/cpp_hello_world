@@ -5,6 +5,7 @@
 //
 #include <iostream>
 #include <sstream>
+#include <array>
 
 using namespace std;
 
@@ -32,6 +33,9 @@ namespace test_namespace {
 
 // Would probably make more sense to be in test_namespace but this is for demonstration
 int add_namespace_values();
+
+void print_array(int arg[], int size);
+void print_2D_3_deep_array(int arg[][3], int size); // Note the dimensions past the first MUST have specified size
 
 int main() {
     // Data types
@@ -238,6 +242,35 @@ test_label:
     // automatic storage variables that are uninitialized have undetermined value
 
     // Arrays
+    // Array size MUST be a CONSTANT expression
+    int int_array [5]; // Undetermined values but does technically contain values
+    // Size must be >= number of elements to init with, note the remaining are set to 0
+    int int_array_2 [4] = { 26, 27 }; // [26, 27, 0, 0]
+    int int_array_3 [2] = { }; // Inits elements to 0, i.e. [0, 0]
+    int int_array_4 [] = { 28 }; // Automatically infers size to be 1
+    int int_array_5 [] { 29, 30, 31, 32}; // Arrays can also be initialized without the = (this is called universal initialization)
+    // Note from docs: Static arrays, and those declared directly in a namespace (outside any function), are always initialized.
+    //                 If no explicit initializer is specified, all the elements are default-initialized (with zeroes, for fundamental types)
+    // Standard accessing and setting for arrays is present
+    // Note that there are exists no kind of index out of bounds exception so caution should be used when getting elements from an array
+    // Multidimensional
+    // No limit to number of dimensions but memory needed increases exponentially
+    int multi_array [3][3] { { 1, 2, 3 }, { 4, 5, 6 }, { 7, 8, 9 } };
+    // Fun tidbit from the tutorial
+    // char century [100][365][24][60][60]; declares an array with elements for each second in a century. This is 3 billion chars and would consume over 3 GB of memory
+    // Arrays as parameters
+    print_array(int_array_5, 4);
+    // Note the dimensions past the first MUST have specified size in the function declaration
+    print_2D_3_deep_array(multi_array, 3);
+    // Library arrays
+    // These include some helpful methods and such
+    array<int, 3> lib_array {33, 34, 35};
+    cout << "There are " << lib_array.size() << " elements in the lib array. They are: ";
+    for (int item : lib_array) {
+        cout << item;
+    }
+    cout << endl;
+
 
     return 0;
 }
@@ -294,4 +327,23 @@ int add_namespace_values() {
     using namespace test_namespace;
     cout << "Adding namespace values for namespace: " << get_name() << endl;
     return abc + xyz;
+}
+
+void print_array(int arg[], int size) {
+    cout << "Printing array: [ ";
+    for (int i = 0; i < size; i++) {
+        cout << arg[i] << " ";
+    }
+    cout << "]" << endl;
+}
+
+void print_2D_3_deep_array(int arg[][3], int size) {
+    cout << "Printing 2D array: [\n";
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < 3; j++) {
+            cout << arg[i][j] << " ";
+        }
+        cout << "\n";
+    }
+    cout << "]" << endl;
 }
